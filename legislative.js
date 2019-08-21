@@ -7,7 +7,6 @@ var config = require('../configs/config.js'),
 module.exports.getDocuments = function (request, response, next) {
     var db = require('./dbConnection');
     var collectionName = getCollectionName(request.url.toLowerCase());
-    console.log("DB: collection name: "+collectionName);
 
     if (request.query.$top > config.response.recordLimit || !request.query.$top) { request.query.$top = config.response.recordLimit; }
     if (!request.query.$inlinecount) { request.query.$inlinecount = true; }
