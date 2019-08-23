@@ -10,7 +10,7 @@ const utils = require('./libraries/util.js');
 const MongoConnection = require('./api/dbConnection');
 const routes = require('./routes/endpointsSecured');
 
-const port = ENV.PORT;
+const port = process.ENV.PORT;
 
 app.set('query parser', 'simple');
 app.use(compression());
