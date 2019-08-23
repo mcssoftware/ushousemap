@@ -10,9 +10,9 @@ const utils = require('./libraries/util.js');
 const MongoConnection = require('./api/dbConnection');
 const routes = require('./routes/endpointsSecured');
 
-const ENV = process.env;
+const port = process.env.PORT;
 
-const port = ENV.PORT;
+utils.cLog("Listen at port: " + port);
 
 app.set('query parser', 'simple');
 app.use(compression());
@@ -22,7 +22,9 @@ app.use('/', routes);
 
 // ### Error Catching
 app.use(function (req, res, next) {
-    utils.cLog("[START]  " + JSON.stringify(res || {err:""}));
+    utils.cLog("[START]  " + JSON.stringify(res || {
+        err: ""
+    }));
     // res.redirect('/Error/500');
     const err = new Error('Not Found');
     err.status = 404;
