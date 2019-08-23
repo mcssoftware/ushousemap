@@ -21,8 +21,8 @@ app.locals.newrelic = newrelic;
 app.use('/', routes);
 
 // ### Error Catching
-app.use(function (err, req, res, next) {
-    utils.cLog("[START]  " + err);
+app.use(function (req, res, next) {
+    utils.cLog("[START]  " + JSON.stringify(res || {err:""}));
     // res.redirect('/Error/500');
     const err = new Error('Not Found');
     err.status = 404;
