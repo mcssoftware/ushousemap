@@ -1,6 +1,7 @@
 ﻿const config = require('../configs/config');
 const loggingLevel = config.loggingLevel;
 const writeLevel = config.writeLevel;
+const fs = require('fs');
 
 module.exports = {
     // fileNameFriendly - Used in file names such as logs, etc., strips out colons.
