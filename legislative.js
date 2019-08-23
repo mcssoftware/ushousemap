@@ -7,10 +7,16 @@ var config = require('../configs/config.js'),
 module.exports.getDocuments = function (request, response, next) {
     var db = require('./dbConnection');
     var collectionName = getCollectionName(request.url.toLowerCase());
-    console.log("DB: collection name: "+collectionName);
+    utils.cLog("DB: collection name: " + collectionName);
 
-    if (request.query.$top > config.response.recordLimit || !request.query.$top) { request.query.$top = config.response.recordLimit; }
-    if (!request.query.$inlinecount) { request.query.$inlinecount = true; }
+    if (request.query.$top > config.response.recordLimit || !request.query.$top) {
+        request.query.$top = config.response.recordLimit;
+    }
+    if (!request.query.$inlinecount) {
+        request.query.$inlinecount = true;
+    }
+
+    utils.cLog("DB: request query: " + request.query);
 
     var query = new breezeMongo.MongoQuery(request.query);
 
@@ -21,10 +27,9 @@ module.exports.getDocuments = function (request, response, next) {
             } else {
                 utilsHttp.notFound(request, response);
             }
-        }
-        else {
-            console.log("Error while getting data from mongo");
-            console.log(error);
+        } else {
+            utils.cLog("Error while getting data from mongo");
+            utils.cLog(error);
             throw error;
         }
     });
@@ -35,7 +40,11 @@ module.exports.getDocumentById = function (request, response) {
     var id = request.params.id;
     var collectionName = getCollectionName(request.url.toLowerCase());
 
-    if (!request.query.$inlinecount) { request.query.$inlinecount = true; }
+    if (!request.query.$inlinecount) {
+        request.query.$inlinecount = true;
+    }
+
+    utils.cLog("[HIT]  " + utils.getDateTime().toString() + " Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
 
     var query = new breezeMongo.MongoQuery(request.query);
     query.filter["_id"] = id;
@@ -43,13 +52,12 @@ module.exports.getDocumentById = function (request, response) {
     query.execute(db.get(), collectionName, function (error, results, next) {
         if (!error) {
             if (results != null) {
-                console.log("[HIT]  " + utils.getDateTime().toString() + " Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
+                utils.cLog("[HIT]  " + utils.getDateTime().toString() + " Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
                 responseMetadata(request, response, results, next);
             } else {
                 utilsHttp.notFound(request, response);
             }
-        }
-        else {
+        } else {
             throw error;
         }
     });
@@ -68,29 +76,21 @@ function getCollectionName(requestUrl) {
 
     if (requestUrlParsed.indexOf("/votes") > -1) {
         collectionName = "Votes";
-    }
-    else if (requestUrlParsed.indexOf("/members") > -1) {
+    } else if (requestUrlParsed.indexOf("/members") > -1) {
         collectionName = "Members";
-    }
-    else if (requestUrlParsed.indexOf("/floorsummaries") > -1) {
+    } else if (requestUrlParsed.indexOf("/floorsummaries") > -1) {
         collectionName = "FloorSummaries";
-    }
-    else if (requestUrlParsed.indexOf("/committeemeetings") > -1) {
+    } else if (requestUrlParsed.indexOf("/committeemeetings") > -1) {
         collectionName = "CommitteeMeetings";
-    }
-    else if (requestUrlParsed.indexOf("/committees") > -1) {
+    } else if (requestUrlParsed.indexOf("/committees") > -1) {
         collectionName = "Committees";
-    }
-    else if (requestUrlParsed.indexOf("/dischargepetitions") > -1) {
+    } else if (requestUrlParsed.indexOf("/dischargepetitions") > -1) {
         collectionName = "DischargePetitions";
-    }
-    else if (requestUrlParsed.indexOf("/floorschedules") > -1) {
+    } else if (requestUrlParsed.indexOf("/floorschedules") > -1) {
         collectionName = "FloorSchedules";
-    }
-    else if (requestUrlParsed.indexOf("/bills") > -1) {
+    } else if (requestUrlParsed.indexOf("/bills") > -1) {
         collectionName = "Bills";
-    }
-    else if (requestUrlParsed.indexOf("/mismembers") > -1) {
+    } else if (requestUrlParsed.indexOf("/mismembers") > -1) {
         collectionName = "Members";
     }
 
@@ -106,33 +106,28 @@ function responseMetadata(request, response, item, next) {
     if (item != null) {
         if (item.Results) {
             totalResults = item.InlineCount;
-        }
-        else {
+        } else {
             totalResults = 1;
         }
     }
 
     if (!request.query.$top) {
         requestTop = 0;
-    }
-    else {
+    } else {
         requestTop = request.query.$top;
     }
 
     if (!request.query.$skip) {
         requestSkip = 0;
-    }
-    else {
+    } else {
         requestSkip = request.query.$skip;
     }
 
     if (requestTop >= config.response.recordLimit && totalResults > requestTop || requestTop == 0 && totalResults != 1) {
         perPage = config.response.recordLimit;
-    }
-    else if (requestTop < totalResults && totalResults != 1) {
+    } else if (requestTop < totalResults && totalResults != 1) {
         perPage = requestTop;
-    }
-    else {
+    } else {
         perPage = totalResults;
     }
 
@@ -140,8 +135,7 @@ function responseMetadata(request, response, item, next) {
 
     if (requestSkip == 0) {
         currentPage = 0;
-    }
-    else {
+    } else {
         currentPage = Math.ceil(requestSkip / perPage);
     }
 
@@ -173,9 +167,15 @@ function responseMetadata(request, response, item, next) {
                 response.setHeader("Content-Type", "text/html");
 
                 if (!item.Results) {
-                    response.status(200).send({ results: [item], pagination: metadata });
+                    response.status(200).send({
+                        results: [item],
+                        pagination: metadata
+                    });
                 } else {
-                    response.status(200).send({ results: item.Results, pagination: metadata });
+                    response.status(200).send({
+                        results: item.Results,
+                        pagination: metadata
+                    });
                 }
 
                 break;
@@ -183,9 +183,15 @@ function responseMetadata(request, response, item, next) {
                 response.setHeader("Content-Type", "application/json");
 
                 if (!item.Results) {
-                    response.status(200).json({ results: [item], pagination: metadata });
+                    response.status(200).json({
+                        results: [item],
+                        pagination: metadata
+                    });
                 } else {
-                    response.status(200).json({ results: item.Results, pagination: metadata });
+                    response.status(200).json({
+                        results: item.Results,
+                        pagination: metadata
+                    });
                 }
 
                 break;
@@ -193,9 +199,15 @@ function responseMetadata(request, response, item, next) {
                 response.setHeader("Content-Type", "application/xml");
 
                 if (!item.Results) {
-                    response.status(200).send(js2xml.parse("Clerk.LCS.API.LegislativeData", { results: [item], pagination: metadata }));
+                    response.status(200).send(js2xml.parse("Clerk.LCS.API.LegislativeData", {
+                        results: [item],
+                        pagination: metadata
+                    }));
                 } else {
-                    response.status(200).send(js2xml.parse("Clerk.LCS.API.LegislativeData", { results: item.Results, pagination: metadata }));
+                    response.status(200).send(js2xml.parse("Clerk.LCS.API.LegislativeData", {
+                        results: item.Results,
+                        pagination: metadata
+                    }));
                 }
 
                 break;
@@ -204,13 +216,18 @@ function responseMetadata(request, response, item, next) {
                 response.setHeader("Content-Type", "application/json");
 
                 if (!item.Results) {
-                    response.status(200).json({ results: [item], pagination: metadata });
+                    response.status(200).json({
+                        results: [item],
+                        pagination: metadata
+                    });
                 } else {
-                    response.status(200).json({ results: item.Results, pagination: metadata });
+                    response.status(200).json({
+                        results: item.Results,
+                        pagination: metadata
+                    });
                 }
         }
-    }
-    catch (err) {
+    } catch (err) {
         throw err;
     }
 };
