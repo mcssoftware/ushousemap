@@ -16,7 +16,7 @@ module.exports.getDocuments = function (request, response, next) {
         request.query.$inlinecount = true;
     }
 
-    utils.cLog("DB: request query: " + request.query);
+    utils.cLog("DB: request query: " + JSON.stringify(request.query));
 
     var query = new breezeMongo.MongoQuery(request.query);
 
