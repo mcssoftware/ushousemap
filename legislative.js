@@ -20,21 +20,27 @@ module.exports.getDocuments = function (request, response, next) {
 
     var query = new breezeMongo.MongoQuery(request.query);
 
-    query.execute(db.get(), collectionName, function (error, results, next) {
-        utils.cLog("DB: result: " + JSON.stringify(error || {}));
-        utils.cLog("DB: result: " + JSON.stringify(results || {}));
-        if (!error) {
-            if (results != null) {
-                responseMetadata(request, response, results, next);
+    utils.cLog("DB: Breeze execute");
+
+    try {
+        query.execute(db.get(), collectionName, function (error, results, next) {
+            utils.cLog("DB: result: " + JSON.stringify(error || {}));
+            utils.cLog("DB: result: " + JSON.stringify(results || {}));
+            if (!error) {
+                if (results != null) {
+                    responseMetadata(request, response, results, next);
+                } else {
+                    utilsHttp.notFound(request, response);
+                }
             } else {
-                utilsHttp.notFound(request, response);
+                utils.cLog("Error while getting data from mongo");
+                utils.cLog(error);
+                throw error;
             }
-        } else {
-            utils.cLog("Error while getting data from mongo");
-            utils.cLog(error);
-            throw error;
-        }
-    });
+        });
+    } catch (e) {
+        utils.cLog("DB Error: " + JSON.stringify(e || {}));
+    }
 };
 
 module.exports.getDocumentById = function (request, response) {
