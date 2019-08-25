@@ -24,7 +24,7 @@ app.use('/', routes);
 
 const faciconPath = path.join(__dirname, 'favicon.ico');
 utils.cLog("Setup favicon: " + faciconPath);
-//app.use(favicon(path));
+app.use(favicon(faciconPath));
 
 // ### Error Catching
 app.use(function (req, res, next) {
