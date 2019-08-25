@@ -22,8 +22,8 @@ app.locals.newrelic = newrelic;
 
 app.use('/', routes);
 
-const path= path.join(__dirname, 'public', 'favicon.ico');
-utils.cLog("Setup favicon: "+path);
+const faciconPath = path.join(__dirname, 'favicon.ico');
+utils.cLog("Setup favicon: " + faciconPath);
 //app.use(favicon(path));
 
 // ### Error Catching
