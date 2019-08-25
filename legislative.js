@@ -23,6 +23,14 @@ module.exports.getDocuments = function (request, response, next) {
     utils.cLog("DB: Breeze execute");
 
     try {
+        db.get().collection(collectionName, {
+            strict: true
+        }, function (err, collection) {
+            if (err) {
+                utils.cLog("DB: result: " + JSON.stringify(err || {}));
+                return;
+            }
+        });
         query.execute(db.get(), collectionName, function (error, results, next) {
             utils.cLog("DB: result: " + JSON.stringify(error || {}));
             utils.cLog("DB: result: " + JSON.stringify(results || {}));
