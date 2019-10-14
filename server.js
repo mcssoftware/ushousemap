@@ -1,5 +1,6 @@
 
 require('dotenv').config();
+require('newrelic');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -47,8 +48,7 @@ app.use('/latest', latestRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-
+  const err = new Error('Not Found: ' + JSON.stringify(req));
   err.status = 404;
   next(err);
 });
