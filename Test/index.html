@@ -1,1 +1,306 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Your dashboard for legislative avtivity. Watch the U.S. House of Representatives live and follow all the action on any device.">
+<meta name="keywords" content="office of the clerk,clerk of the house,u.s. house of representatives,congress,legislative activity,house live,houselive,house floor,committee meetings,daily schedule,bill actions">
+<link rel="icon" sizes="192x192" href="/assets/houselive-icon-2.cceaf38dac1dcd95614566ccba0aa4e7.png">
+<link rel="icon" sizes="128x128" href="/assets/houselive-icon-2-small.4de9dbae8eaff09bb5a95bc65e6d1141.png">
+<link rel="apple-touch-icon" sizes="128x128" href="/assets/houselive-icon-2-small.4de9dbae8eaff09bb5a95bc65e6d1141.png">
+<link rel="apple-touch-icon-precomposed" sizes="128x128" href="/assets/houselive-icon-2-small.4de9dbae8eaff09bb5a95bc65e6d1141.png">
+<title>BETA | House FloorCast</title>
+<link rel="icon" href="/assets/favicon.8c6dd7544ab98ba0887f6cd5fdb4806f.ico" type="image/x-icon">
+<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link href="//amp.azure.net/libs/amp/2.1.7/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/2.1.7/azuremediaplayer.min.js"></script>
+<link href="/css/vendor.d42b7bbddb1fbf67e61e.css" rel="stylesheet">
+<link href="/css/app.d42b7bbddb1fbf67e61e.css" rel="stylesheet">
+<style id="antiClickjack">
+  body {
+    display:none !important;
+  }
+  
+</style>
+<script>
+  if (self === top) {
+    var antiClickjack = document.getElementById("antiClickjack");
+    antiClickjack.parentNode.removeChild(antiClickjack);
+  } else {
+    top.location = self.location;
+  }
+</script>
+  <body>
+    <h1 class="hiddenRow">House FloorCast Beta</h1>
+<div id="skip-to-content"><a class="skip-link" data-target="activity">Skip to Floor Activity</a><a class="skip-link" data-target="bill">Skip to Bills</a><a class="skip-link" data-target="vote">Skip to Votes</a><a class="skip-link" data-target="transcript">Skip to Transcript</a><a class="skip-link" data-target="daily">Skip to Daily Schedule</a><a class="skip-link" data-target="committee-meetings">Skip to Committee Meetings</a><a class="skip-link" data-target="introduced">Skip to Introduced Bills</a><a class="skip-link" data-target="reported">Skip to Reported Bills</a><a class="skip-link" data-target="passed">Skip to Passed Bills</a><a class="skip-link" data-target="presented">Skip to Presented Bills</a><a class="skip-link" data-target="enacted">Skip to Enacted Bills</a></div>
+<div class="modal modal--fullscreen modal--closed" id="app-modal">
+  <div class="modal__container">
+    <div class="modal__title modal__title--error"> </div>
+    <div class="modal__message"></div>
+    <div class="modal__footer">
+      <div class="modal__button modal__close">Close</div>
+    </div>
+  </div>
+</div>
+<div class="no-flexbox"><img class="no-flexbox__img" src="/assets/clerk-logo-approved.e450c73c3e4d157883ae5a49e4b11c58.png" alt="Office of the Clerk Logo">
+  <div class="no-flexbox__message">Your browser does not support features needed for this application to function. Upgrade to the latest version or try a different one, otherwise this site will not display properly.</div>
+</div>
+    <div class="l-dash">
+<div class="header" id="navbar"><a class="header__logo" href="https://clerkpreview.house.gov/" aria-label="Office of the Clerk Logo"></a>
+  <div class="header__date-utils">
+    <div class="calendar-utils">
+      <div class="calendar-utils__prev button"><i class="fa fa-chevron-left"></i></div>
+      <div class="calendar-utils__current"><span class="display-date"></span><i class="fa fa-calendar calendar-trigger"></i></div>
+      <div class="calendar-utils__next button"><i class="fa fa-chevron-right"></i></div>
+    </div>
+  </div>
+  <div class="header__options">
+    <div class="header__options-container"> 
+      <div class="time-display" style="display: none">
+        <div class="time-display__clock"><span class="time-display__time"></span><span class="time-display__zone"></span></div>
+      </div>
+      <div class="option clock" style="display: none">
+        <div class="clock__hour-hand"></div>
+        <div class="clock__minute-hand"></div><span class="option__overlay">
+          <input type="checkbox" value="None" id="time-toggle" name="check" checked>
+          <label for="time-toggle">Time</label></span>
+      </div>
+      <div class="option live-video-link"><span class="option__overlay">Go live</span></div>
+      <div class="option calendar-trigger">
+        <div id="datepicker"></div><span class="option__overlay">Calendar</span>
+      </div>
+      <div class="option theme-trigger"><span class="option__overlay">Theme</span></div>
+      <div class="theme-selector">
+        <div class="theme-selector__title">Theme:</div>
+        <ul class="theme-selector__menu">
+          <li class="theme-selector__item is-active clerk1-theme" data-theme="css/clerk1-theme.css" data-theme-name="clerk1">Clerk Theme</li>
+          <li class="theme-selector__item disabled classic-theme" data-theme="css/classic-theme.css" data-theme-name="classic">HouseLive Classic</li>
+        </ul>
+      </div>
+      <div class="option help-selector"><span class="option__overlay">Tour</span></div>
+    </div>
+    <div class="version-bar">
+      <div class="version-bar__text">Version</div>
+      <div class="version-bar__version">Beta</div>
+    </div>
+  </div>
+</div>
+      <div class="l-content">
+        <div class="l-flex-col expanded left">
+          <div class="video-container" id="video-container"></div>
+<div class="last-action" style="display: none">
+  <div class="last-action__title">Last Floor Action</div>
+  <div class="last-action__time"></div>
+  <div class="last-action__description"></div>
+</div>
+          <div class="splitter-horizontal"></div>
+          <div class="under-video">
+            <div class="accordion-tabs-container tabs">
+              <div class="accordion-tabs-minimal">
+                <div class="tab-link icon-tab is-active" id="link-info" aria-label="Links">
+                </div>
+              </div>
+              <div class="tab-content-container">
+                <div class="tab-content is-open" id="link-info-content">
+                  <div class="panel">
+                    <div class="panel__heading">Congress.gov Search</div>
+                    <div class="panel__content">
+                      <form class="embedded-search" method="get" target="_blank" action=" https://congress.gov/search">
+                        <div class="embedded-search__wrapper">
+                          <div class="embedded-search__formats">
+                            <select class="embedded-search__select" name="search-source" aria-label="Search source">
+                              <option value="current-legislation">Current Legislation</option>
+                            </select>
+                            <input class="embedded-search__input embedded-search__input--unbordered locsuggest" type="text" name="q" placeholder="Examples: hr5, sres9, &quot;health care&quot;" value="" aria-label="Legislation search input">
+                            <button class="embedded-search__submit embedded-search__submit--unbordered" type="submit" aria-label="Go"></button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="panel">
+                    <div class="panel__heading">Legislative Links</div>
+                    <div class="panel__content">
+                      <div class="resource-list"><a class="resource-list__link" href="https://www.congress.gov/congressional-record">Latest Congressional Record</a><a class="resource-list__link" href="https://www.congress.gov/congressional-record/browse-by-date">Congressional Record Search</a><a class="resource-list__link" href="https://www.govinfo.gov">Gov Info</a><a class="resource-list__link" href="https://www.gpo.gov/fdsys/">GPO Federal Digital System</a><a class="resource-list__link" href="http://clerk.house.gov/legislative/legvotes.aspx">Roll Call Votes</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel">
+                    <div class="panel__heading">Other Links</div>
+                    <div class="panel__content">
+                      <div class="resource-list"><a class="resource-list__link" href="http://docs.house.gov/floor/">Bills this Week</a><a class="resource-list__link" href="http://clerk.house.gov/committee_info/index.aspx">Committee Information</a><a class="resource-list__link" href="http://clerk.house.gov/member_info/index.aspx">Member Information</a><a class="resource-list__link" href="http://clerk.house.gov/member_info/leadership.aspx">Leadership Information</a><a class="resource-list__link" href="https://www.senate.gov/">Senate</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="splitter-vertical"></div>
+        <div class="l-flex-col right mobile-tabs">
+          <div class="sidebar" id="sidebar">
+            <div class="accordion-tabs-container">
+              <div class="accordion-tabs-minimal parent-tabs">
+                <div class="tab-link icon-tab is-active" id="floor" aria-label="Floor">
+                </div>
+                <div class="tab-link icon-tab" id="transcript" aria-label="Caption Text">
+                </div>
+                <div class="tab-link icon-tab" id="schedule" aria-label="Schedules">
+                </div>
+                <div class="tab-link icon-tab desktop" id="bill-activity" aria-label="Legislative Actions">
+                </div>
+                <div class="tab-link icon-tab tablet" id="links" aria-label="Links">
+                </div>
+                <div class="tab-link icon-tab mobile" id="watch" aria-label="Watch">
+                </div>
+                <div class="tab-link icon-tab mobile" id="more" aria-label="More">
+                </div>
+              </div>
+              <div class="tab-content-container parent-content-container">
+                <div class="tab-content is-open" id="floor-content">
+                  <div class="accordion-tabs-container tabs">
+                    <div class="accordion-tabs-minimal">
+                      <div class="tab-link is-active" id="activity">Activity<span class="activity-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="bill">Bills<span class="bill-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="vote">Votes<span class="vote-tab-count">0</span>
+                      </div>
+                    </div>
+                    <div class="tab-content-container">
+                      <div class="tab-content is-open" id="activity-content">
+                      </div>
+                      <div class="tab-content" id="bill-content">
+                      </div>
+                      <div class="tab-content" id="vote-content">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content" id="transcript-content">
+                  <div class="accordion-tabs-container tabs">
+                    <div class="accordion-tabs-minimal">
+                      <div class="tab-text">Text compiled from uncorrected Closed Captions</div>
+                    </div>
+                    <div class="tab-content-container">
+                      <div class="tab-content is-open" id="session-transcript-content">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content" id="schedule-content">
+                  <div class="accordion-tabs-container tabs">
+                    <div class="accordion-tabs-minimal">
+                      <div class="tab-link is-active" id="btw">Bills this Week<span class="btw-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="committee-meetings">
+                        <div class="desktop">Committee Meetings</div>
+                        <div class="mobile">Meetings</div><span class="committee-meetings-tab-count">0</span>
+                      </div>
+                    </div>
+                    <div class="tab-content-container">
+                      <div class="tab-content is-open" id="btw-content">
+                      </div>
+                      <div class="tab-content" id="committee-meetings-content">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content" id="bill-activity-content">
+                  <div class="accordion-tabs-container tabs">
+                    <div class="accordion-tabs-minimal">
+                      <div class="tab-link is-active" id="introduced">Introduced<span class="introduced-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="reported">Reported<span class="reported-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="passed">
+                        <div class="desktop">Passed House</div>
+                        <div class="mobile">Passed</div><span class="passed-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="presented">
+                        <div class="desktop">To President</div>
+                        <div class="mobile">President</div><span class="presented-tab-count">0</span>
+                      </div>
+                      <div class="tab-link" id="enacted">
+                        <div class="desktop">Became Law</div>
+                        <div class="mobile">Law</div><span class="enacted-tab-count">0</span>
+                      </div>
+                    </div>
+                    <div class="tab-content-container">
+                      <div class="tab-content is-open" id="introduced-content">
+                      </div>
+                      <div class="tab-content" id="reported-content">
+                      </div>
+                      <div class="tab-content" id="passed-content">
+                      </div>
+                      <div class="tab-content" id="presented-content">
+                      </div>
+                      <div class="tab-content" id="enacted-content">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content mobile-menu" id="links-content">
+                  <ul class="content-list">
+                    <li class="content-list__divider">Congress.gov Search</li>
+                    <li>
+                      <form class="embedded-search" method="get" target="_blank" action=" https://congress.gov/search">
+                        <div class="embedded-search__wrapper">
+                          <div class="embedded-search__formats">
+                            <select class="embedded-search__select" name="search-source" aria-label="Search source">
+                              <option value="current-legislation">Current Legislation</option>
+                            </select>
+                            <input class="embedded-search__input embedded-search__input--unbordered locsuggest content-list__item" type="text" name="q" placeholder="Examples: hr5, sres9, &quot;health care&quot;" value="" aria-label="Legislation search input">
+                            <button class="embedded-search__submit embedded-search__submit--unbordered content-list__item" type="submit" aria-label="Go">Search</button>
+                          </div>
+                        </div>
+                      </form>
+                    </li>
+                    <li class="content-list__divider">Legislation</li>
+                    <li class="content-list__item external"><a href="https://www.congress.gov/congressional-record">Latest Congressional Record</a></li>
+                    <li class="content-list__item external"><a href="https://www.congress.gov/congressional-record/browse-by-date">Congressional Record Search</a></li>
+                    <li class="content-list__item external"><a href="https://www.govinfo.gov">Gov Info</a></li>
+                    <li class="content-list__item external"><a href="https://www.gpo.gov/fdsys/">GPO Federal Digital System</a></li>
+                    <li class="content-list__item external"><a href="http://clerk.house.gov/legislative/legvotes.aspx">Roll Call Votes</a></li>
+                    <li class="content-list__divider">Other</li>
+                    <li class="content-list__item external"><a href="http://docs.house.gov/floor/">Bills this Week</a></li>
+                    <li class="content-list__item external"><a href="http://clerk.house.gov/committee_info/index.aspx">Committee Information</a></li>
+                    <li class="content-list__item external"><a href="http://clerk.house.gov/member_info/index.aspx">Member Information</a></li>
+                    <li class="content-list__item external"><a href="http://clerk.house.gov/member_info/leadership.aspx">Leadership Information</a></li>
+                    <li class="content-list__item external"><a href="https://www.senate.gov/">Senate</a></li>
+                    <li class="content-list__divider"> </li>
+                    <li class="content-list__item external survey-link mobile-survey-link"><a href="https://www.surveymonkey.com/r/liveClerk">Take our survey!</a></li>
+                  </ul>
+                </div>
+                <div class="tab-content mobile-menu" id="help-content">
+                </div>
+                <div class="tab-content mobile-menu" id="more-content">
+                  <ul class="content-list">
+                    <li class="content-list__divider">Sections</li>
+                    <li class="content-list__item internal" data-link="#links-content">Resources</li>
+                    <li class="content-list__item internal" data-link="#bill-activity-content">Legislative Actions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="banner banner--bottom">
+  <div class="banner__close"></div>
+  <div class="banner__text">
+    <p>Thank you for trying out live.house.gov!</p>
+    <p>To send feedback,&nbsp;<a class="survey-link" href="https://www.surveymonkey.com/r/liveClerk">take our survey</a></p>
+  </div>
+</div>
+    <script type="text/javascript" src="/js/analytics.d42b7bbddb1fbf67e61e.js"></script>
+    <script type="text/javascript" src="/js/polyfills.d42b7bbddb1fbf67e61e.js"></script>
+    <script type="text/javascript" src="/js/vendor.d42b7bbddb1fbf67e61e.js"></script>
+    <script type="text/javascript" src="/js/app.d42b7bbddb1fbf67e61e.js"></script>
+    <script type="text/javascript" src="/js/other.d42b7bbddb1fbf67e61e.js"></script>
+  </body>
+</html>
