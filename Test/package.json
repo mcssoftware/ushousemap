@@ -1,0 +1,19 @@
+{
+  "name": "floorcastlegacylinux",
+  "version": "1.0.0",
+  "description": "TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://LegislativeComputerSystems@dev.azure.com/legislativecomputersystems/floorcast%20live%20client/_git/floorcastlegacylinux"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
