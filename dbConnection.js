@@ -11,11 +11,11 @@ exports.connect = function (url, done) {
     var server = config.dbSettings.serverName;
     var port = config.dbSettings.serverPort;
     var dbName = config.dbSettings.databaseName;
-    const username = config.dbSettings.username;
+    const username = 'Clerkuser';//config.dbSettings.username;
     const password = config.dbSettings.password;
 
     if (state.db) return done();
-    utils.cLog('[DB]  ' + utils.getDateTime().toString() + ' Attempting Connection to MongoDB');
+    utils.cLog('[DB] Attempting Connection to MongoDB');
 
     if (!utils.isString(url)){
         url = 'mongodb://';
@@ -49,30 +49,31 @@ exports.connect = function (url, done) {
     };
 
     if (!config.environment.isAzure) {
-        options = {
-            db: {
-                native_parser: false
-            },
-            server: {
-                auto_reconnect: true,
-                poolSize: 50
-            },
-            replSet: {},
-            mongos: {},
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        };
+        url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=admin&authMechanism=SCRAM-SHA-1'
+        // options = {
+        //     db: {
+        //         native_parser: false
+        //     },
+        //     server: {
+        //         auto_reconnect: true,
+        //         poolSize: 50
+        //     },
+        //     replSet: {},
+        //     mongos: {},
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true
+        // };
     }
 
-    utils.cLog('[DB]  ' + utils.getDateTime().toString() + ' Connecting with MongoDB url: ' + url);
+    utils.cLog('[DB] Connecting with MongoDB url: ' + url);
 
-    MongoClient.connect(url, options,
+    MongoClient.connect(url, 
         function (err, db) {
             if (err) {
                 utils.cLog('[DB]  Error connecting to MongoDB. ' + err);
                 return done(err);
             } else {
-                utils.cLog('[DB]  ' + utils.getDateTime().toString() + ' Connected to MongoDB');
+                utils.cLog('[DB] Connected to MongoDB');
                 state.db = db;
                 done();
             }
