@@ -11,7 +11,7 @@ exports.connect = function (url, done) {
     var server = config.dbSettings.serverName;
     var port = config.dbSettings.serverPort;
     var dbName = config.dbSettings.databaseName;
-    const username = 'Clerkuser';//config.dbSettings.username;
+    const username = config.dbSettings.username;
     const password = config.dbSettings.password;
 
     if (state.db) return done();
@@ -49,7 +49,7 @@ exports.connect = function (url, done) {
     };
 
     if (!config.environment.isAzure) {
-        url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&readPreference=primaryPreferred&authSource=admin&authMechanism=SCRAM-SHA-1&3t.uriVersion=3&3t.connection.name=HouseDB';
+        url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&readPreference=primaryPreferred&authSource=admin&authMechanism=SCRAM-SHA-1';
         
         // options = {
         //     db: {
@@ -69,7 +69,7 @@ exports.connect = function (url, done) {
 
     utils.cLog('[DB] Connecting with MongoDB url: ' + url);
 
-    MongoClient.connect(url, options,
+    MongoClient.connect(url, 
         function (err, mongoclient) {
             if (err) {
                 utils.cLog('[DB]  Error connecting to MongoDB. ' + err);
