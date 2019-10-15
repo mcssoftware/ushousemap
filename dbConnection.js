@@ -49,7 +49,8 @@ exports.connect = function (url, done) {
     };
 
     if (!config.environment.isAzure) {
-        url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=admin&authMechanism=SCRAM-SHA-1'
+        url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&readPreference=primaryPreferred&authSource=admin&authMechanism=SCRAM-SHA-1&3t.uriVersion=3&3t.connection.name=HouseDB';
+        
         // options = {
         //     db: {
         //         native_parser: false
@@ -63,18 +64,19 @@ exports.connect = function (url, done) {
         //     useNewUrlParser: true,
         //     useUnifiedTopology: true
         // };
+        options = { useNewUrlParser: true }
     }
 
     utils.cLog('[DB] Connecting with MongoDB url: ' + url);
 
-    MongoClient.connect(url, 
-        function (err, db) {
+    MongoClient.connect(url, options,
+        function (err, mongoclient) {
             if (err) {
                 utils.cLog('[DB]  Error connecting to MongoDB. ' + err);
                 return done(err);
             } else {
                 utils.cLog('[DB] Connected to MongoDB');
-                state.db = db;
+                state.db = mongoclient.db(dbName);
                 done();
             }
         });

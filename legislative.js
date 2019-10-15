@@ -7,7 +7,6 @@ var config = require('../configs/config.js'),
 module.exports.getDocuments = function (request, response, next) {
     var db = require('./dbConnection');
     var collectionName = getCollectionName(request.url.toLowerCase());
-    utils.cLog("DB: collection name: " + collectionName);
 
     if (request.query.$top > config.response.recordLimit || !request.query.$top) {
         request.query.$top = config.response.recordLimit;
@@ -16,39 +15,23 @@ module.exports.getDocuments = function (request, response, next) {
         request.query.$inlinecount = true;
     }
 
-    utils.cLog("DB: request query: " + JSON.stringify(request.query));
+    utils.cLog("DB: collection : " + collectionName + " request query: " + JSON.stringify(request.query));
 
     var query = new breezeMongo.MongoQuery(request.query);
 
-    utils.cLog("DB: Breeze execute");
-
-    try {
-        db.get().collection(collectionName, {
-            strict: true
-        }, function (err, collection) {
-            if (err) {
-                utils.cLog("DB: result: " + JSON.stringify(err || {}));
-                return;
-            }
-        });
-        query.execute(db.get(), collectionName, function (error, results, next) {
-            utils.cLog("DB: result: " + JSON.stringify(error || {}));
-            utils.cLog("DB: result: " + JSON.stringify(results || {}));
-            if (!error) {
-                if (results != null) {
-                    responseMetadata(request, response, results, next);
-                } else {
-                    utilsHttp.notFound(request, response);
-                }
+    query.execute(db.get(), collectionName, function (error, results) {
+        if (!error) {
+            if (results != null) {
+                responseMetadata(request, response, results, next);
             } else {
-                utils.cLog("Error while getting data from mongo");
-                utils.cLog(error);
-                throw error;
+                utilsHttp.notFound(request, response);
             }
-        });
-    } catch (e) {
-        utils.cLog("DB Error: " + JSON.stringify(e || {}));
-    }
+        } else {
+            utils.cLog("Error while getting data from mongo");
+            utils.cLog(error);
+            next(error);
+        }
+    });
 };
 
 module.exports.getDocumentById = function (request, response) {
@@ -60,7 +43,7 @@ module.exports.getDocumentById = function (request, response) {
         request.query.$inlinecount = true;
     }
 
-    utils.cLog("[HIT]  " + utils.getDateTime().toString() + " Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
+    utils.cLog("[HIT] Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
 
     var query = new breezeMongo.MongoQuery(request.query);
     query.filter["_id"] = id;
@@ -68,13 +51,13 @@ module.exports.getDocumentById = function (request, response) {
     query.execute(db.get(), collectionName, function (error, results, next) {
         if (!error) {
             if (results != null) {
-                utils.cLog("[HIT]  " + utils.getDateTime().toString() + " Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
                 responseMetadata(request, response, results, next);
             } else {
                 utilsHttp.notFound(request, response);
             }
         } else {
-            throw error;
+            utils.cLog("[ERROR] " + JSON.stringify(error || {}));
+            next(error);
         }
     });
 };
@@ -108,6 +91,8 @@ function getCollectionName(requestUrl) {
         collectionName = "Bills";
     } else if (requestUrlParsed.indexOf("/mismembers") > -1) {
         collectionName = "Members";
+    } else if (requestUrlParsed.indexOf("/broadcastevents") > -1) {
+        collectionName = "HouseLive";
     }
 
     return collectionName;
@@ -244,6 +229,7 @@ function responseMetadata(request, response, item, next) {
                 }
         }
     } catch (err) {
-        throw err;
+        utils.cLog("[ERROR] trying to response with metadata");
+        next(err);
     }
 };
