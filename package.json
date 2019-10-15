@@ -1,0 +1,28 @@
+{
+  "engines": {
+    "node": "=4.5.0"
+  },
+  "name": "clerk.lcs.backend.azure-node-api",
+  "version": "2.0.0",
+  "description": "Clerk.LCS.Backend.AzureNodeAPI",
+  "main": "app.js",
+  "author": {
+    "name": "Dennis Khau",
+    "email": "dennis.khau@mail.house.gov"
+  },
+  "scripts": {
+    "build": "npm install",
+    "start": "node app.js",
+    "watch": "mocha --recursive -R min --watch"
+  },
+  "dependencies": {
+    "breeze-mongodb": "0.0.8",
+    "compression": "^1.6.2",
+    "dotenv": "^8.1.0",
+    "express": "^4.14.0",
+    "js2xmlparser": "^2.0.2",
+    "mongodb": "^3.3.2",
+    "newrelic": "^1.37.2",
+    "serve-favicon": "^2.5.0"
+  }
+}
