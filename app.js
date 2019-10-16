@@ -28,7 +28,7 @@ app.use(favicon(faciconPath));
 
 // ### Error Catching
 app.use(function (req, res, next) {
-    utils.cLog("[START]  " + utils.stringify(res || { err: "" }));
+    utils.cLog("[START]  " + utils.stringify(req || { err: "" }));
     // res.redirect('/Error/500');
     const err = new Error('Not Found');
     err.status = 404;
