@@ -15,12 +15,13 @@ module.exports.getDocuments = function (request, response, next) {
         request.query.$inlinecount = true;
     }
 
-    utils.cLog("DB: collection : " + collectionName + " request query: " + JSON.stringify(request.query));
+    utils.cLog("DB: collection : " + collectionName + " request query: " + utils.stringify(request.query));
 
     var query = new breezeMongo.MongoQuery(request.query);
 
     query.execute(db.get(), collectionName, function (error, results) {
         if (!error) {
+            utils.cLog("Received results from MongoDB.");
             if (results != null) {
                 responseMetadata(request, response, results, next);
             } else {
@@ -56,7 +57,7 @@ module.exports.getDocumentById = function (request, response) {
                 utilsHttp.notFound(request, response);
             }
         } else {
-            utils.cLog("[ERROR] " + JSON.stringify(error || {}));
+            utils.cLog("[ERROR] " + utils.stringify(error || {}));
             next(error);
         }
     });
