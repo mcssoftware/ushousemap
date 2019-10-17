@@ -17,7 +17,7 @@ exports.connect = function (url, done) {
     if (state.db) return done();
     utils.cLog('[DB] Attempting Connection to MongoDB');
 
-    if (!utils.isString(url)){
+    if (!utils.isString(url)) {
         url = 'mongodb://';
         if (utils.isString(username) && utils.isString(password)) {
             url = url + encodeURIComponent(username.trim()) + ":" + encodeURIComponent(password.trim()) + "@";
@@ -50,34 +50,32 @@ exports.connect = function (url, done) {
 
     if (!config.environment.isAzure) {
         url = url +'?ssl=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&readPreference=primaryPreferred&authSource=admin&authMechanism=SCRAM-SHA-1';
-        
+                
+        options = { useNewUrlParser: true };
+
         // options = {
-        //     db: {
-        //         native_parser: false
-        //     },
-        //     server: {
-        //         auto_reconnect: true,
-        //         poolSize: 50
-        //     },
-        //     replSet: {},
-        //     mongos: {},
+        //     serverSelectionTimeoutMS: 10000,
+        //     connectTimeoutMS: 10000,
+        //     readPreference: 'primaryPreferred',
+        //     ssl: true,
+        //     authSource: 'admin',
+        //     authMechanism: 'SCRAM-SHA-1',
         //     useNewUrlParser: true,
         //     useUnifiedTopology: true
         // };
-        options = { useNewUrlParser: true }
     }
 
     utils.cLog('[DB] Connecting with MongoDB url: ' + url);
 
-    MongoClient.connect(url, 
+    MongoClient.connect(url, options,
         function (err, mongoclient) {
             if (err) {
                 utils.cLog('[DB]  Error connecting to MongoDB. ' + err);
                 return done(err);
             } else {
                 utils.cLog('[DB] Connected to MongoDB');
-                // state.db = mongoclient.db(dbName);
-                state.db = db;
+                state.db = mongoclient.db(dbName);
+                // state.db = db;
                 done();
             }
         });
