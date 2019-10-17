@@ -77,6 +77,7 @@ exports.connect = function (url, done) {
             } else {
                 utils.cLog('[DB] Connected to MongoDB');
                 state.db = mongoclient.db(dbName);
+                // state.db = db;
                 done();
             }
         });
