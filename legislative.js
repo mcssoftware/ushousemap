@@ -29,8 +29,9 @@ module.exports.getDocuments = function (request, response, next) {
             }
         } else {
             utils.cLog("Error while getting data from mongo");
-            utils.cLog(error);
-            next(error);
+            const errormsg = utils.stringify(error || {});
+            utils.cLog(errormsg);
+            next(errormsg);
         }
     });
 };
@@ -57,8 +58,9 @@ module.exports.getDocumentById = function (request, response) {
                 utilsHttp.notFound(request, response);
             }
         } else {
-            utils.cLog("[ERROR] " + utils.stringify(error || {}));
-            next(error);
+            const errormsg = utils.stringify(error || {});
+            utils.cLog("[ERROR] " +errormsg);
+            next(errormsg);
         }
     });
 };
