@@ -43,7 +43,7 @@ module.exports.requireHttps = function (redirect) {
 module.exports.enforceSecurity = function () {
     return function (req, res, next) {
         if (config.global.enforceAuth) {
-            utils.cLog(utils.stringify(error));
+            utils.cLog(utils.stringify(req.headers));
             if (req.headers['x-api-key'] === config.global.headerKeyValue) {
                 return next();
             } else {
