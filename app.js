@@ -40,18 +40,13 @@ server.listen(port, () => {
     utils.cLog(`Starting up server at: ${new Date()}`, true);
     utils.cLog(`Running server on port ${port}`);
 
-    setTimeout(() => {
-        // ### Connect to DB & Start App
-        // --> MongoConnection URL is blank, provide MongoURL to OVERRIDE ONLY
-        debugger;
-        MongoConnection.connect('', function (err) {
-            if (err) {
-                utils.cLog("[EB]  " + err);
-                // process.exit(1);
-            }
-        });
-    }, 10000);
-
-
+    // ### Connect to DB & Start App
+    // --> MongoConnection URL is blank, provide MongoURL to OVERRIDE ONLY
+    MongoConnection.connect('', function (err) {
+        if (err) {
+            utils.cLog("[EB]  " + err);
+            // process.exit(1);
+        }
+    });
 
 });
