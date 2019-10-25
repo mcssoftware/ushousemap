@@ -28,7 +28,7 @@ app.use(favicon(faciconPath));
 
 // ### Error Catching
 app.use(function (req, res, next) {
-    utils.cLog("[START]  " + utils.stringify(req || { err: "" }));
+    utils.cLog("[ERROR NOT FOUND]  " + req.originalUrl);
     // res.redirect('/Error/500');
     const err = new Error('Not Found');
     err.status = 404;
@@ -40,13 +40,18 @@ server.listen(port, () => {
     utils.cLog(`Starting up server at: ${new Date()}`, true);
     utils.cLog(`Running server on port ${port}`);
 
-    // ### Connect to DB & Start App
-    // --> MongoConnection URL is blank, provide MongoURL to OVERRIDE ONLY
-    MongoConnection.connect('', function (err) {
-        if (err) {
-            utils.cLog("[EB]  " + err);
-            // process.exit(1);
-        }
-    });
+    setTimeout(() => {
+        // ### Connect to DB & Start App
+        // --> MongoConnection URL is blank, provide MongoURL to OVERRIDE ONLY
+        debugger;
+        MongoConnection.connect('', function (err) {
+            if (err) {
+                utils.cLog("[EB]  " + err);
+                // process.exit(1);
+            }
+        });
+    }, 10000);
+
+
 
 });
