@@ -45,7 +45,7 @@ server.listen(port, () => {
     MongoConnection.connect('', function (err) {
         if (err) {
             utils.cLog("[EB]  " + err);
-            // process.exit(1);
+            // process.exit(1); 
         }
     });
 
