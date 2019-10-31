@@ -40,42 +40,46 @@ const apiController = (() => {
     });
   };
 
-  // Days in Session
-  const getSessionDays = (req, res) => {
-    try {
-      const year = req.params.year || (new Date()).getFullYear();
-      const query = `?$filter=startswith(_id,${year})&$select=startDate`;
-      let cached = false;
-      var ms_per_minute = 1000 * 60;
-      var cachingTime = 60 * ms_per_minute;
-      let datasent = false;
-      if (sessionDays.hasOwnProperty(year)) {
-        if (sessionDays[year].hasOwnProperty("lastUpdated") && sessionDays[year].hasOwnProperty("sessionDays")) {
-          if ((Date.now() - sessionDays[year]["lastUpdated"]) < cachingTime) {
-            datasent = cached = true;
-            res.send(sessionDays[year]["sessionDays"]);
+  const cachedSessionDays = (year) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const query = `?$filter=startswith(_id,${year})&$select=startDate`;
+        let found = false;
+        var ms_per_minute = 1000 * 60;
+        var cachingTime = 60 * ms_per_minute;
+        if (sessionDays.hasOwnProperty(year)) {
+          if (sessionDays[year].hasOwnProperty("lastUpdated") && sessionDays[year].hasOwnProperty("sessionDays")) {
+            if ((Date.now() - sessionDays[year]["lastUpdated"]) < cachingTime) {
+              fount = true;
+              resolve(sessionDays[year]["sessionDays"]);
+            }
           }
         }
-      }
 
-      if (!cached) {
-        buildApiQuery(routes.floorSummary, query, (data) => {
-          if (sessionDays.hasOwnProperty(year)) {
-            sessionDays[year] = {
-              lastUpdated: Date.now(),
-              sessionDays: data
-            };
-          }
-          if (!datasent) {
-            return res.send(data);
-          }
-        });
+        if (!found) {
+          buildApiQuery(routes.floorSummary, query, (data) => {
+            if (sessionDays.hasOwnProperty(year)) {
+              sessionDays[year] = {
+                lastUpdated: Date.now(),
+                sessionDays: data
+              };
+            }
+            resolve(data);
+          });
+        }
+      } catch (err) {
+        reject("error");
       }
-    } catch (err) {
-      console.error(err) // will log the error with the error stack
-    }
-    // Default to current year if no date specified
+    });
+  }
 
+  // Days in Session
+  const getSessionDays = (req, res, next) => {
+    cachedSessionDays(req.params.year || (new Date()).getFullYear())
+      .then(function (data) {
+        res.send(data);
+      })
+      .catch(next)
   };
 
   // Bill Details (single)
