@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 require('newrelic');
 
@@ -8,7 +7,8 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const server = require('http').createServer(app);
-const cLog = require('./helpers/utils.helpers')().cLog;
+const utils = require('./helpers/utils.helpers')();
+const cLog = utils.cLog;
 const apiRoutes = require('./routes/api.routes');
 const latestRoutes = require('./routes/latest.routes');
 const pollingService = require('./services/polling/polling')();
@@ -39,18 +39,31 @@ requiredENVSettings.forEach((setting) => {
 // Middleware
 if (ENV.USE_CORS.toLowerCase() === 'true') app.use(cors()); // Allowing CORs requests (TODO: Specify locations?)
 // TODO: Probably should lower the limit (defaults to 100kb, which is too small for downloading transcripts)
-app.use(bodyParser.json({ limit: ENV.BODY_PARSER_LIMIT || '100kb' }));
-app.use(bodyParser.urlencoded({ limit: ENV.BODY_PARSER_LIMIT || '100kb', extended: false }));
+app.use(bodyParser.json({
+  limit: ENV.BODY_PARSER_LIMIT || '100kb'
+}));
+app.use(bodyParser.urlencoded({
+  limit: ENV.BODY_PARSER_LIMIT || '100kb',
+  extended: false
+}));
 
 // Route paths
 app.use('/', apiRoutes);
 app.use('/latest', latestRoutes);
+app.use('/robots933456.txt',(req, res)=>{
+  res.header('Content-Type', 'text/plain');
+  res.send('');
+});
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found: ' + req.url);
-  err.status = 404;
-  next(err);
+  res.status(404);
+  var message = 'Not Found: ' + req.url + '; query: ' + req.query;
+  console.log(message);
+  res.send({ error: message });
+  // const err = new Error('Not Found: ' + JSON.stringify(req.query));
+  // err.status = 404;
+  // next(err);
 });
 
 // Start server
