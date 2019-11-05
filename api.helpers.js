@@ -16,6 +16,7 @@ const requestSettings = {
 
   json: true
 };
+
 let base = config.api.base.replace(/\/$/, "");
 
 const helpers = () => {
@@ -95,6 +96,7 @@ const helpers = () => {
 
         // Handle data - add to our result array (this strips it of the pagination metadata)
         addResults(data.results, results);
+        cLog.info(`Total number of pages:${totalPages}`);
 
         // Send combined results to client if there is only one page (or if we only want the first one), else continue to call the api (if paginated)
         if ((totalPages === 1) || (totalItems === 0) || (opts.topOnly)) {
@@ -112,6 +114,7 @@ const helpers = () => {
         // eslint-disable-next-line no-inner-declarations
         function makePaginatedRequest(url, currentAttempt) {
           let attempts = currentAttempt || 0;
+          cLog.info(`Retry #${attempts}`);
 
           requestOpts.url = url;
           request(requestOpts, (error, response, body) => {
@@ -133,7 +136,7 @@ const helpers = () => {
                   makePaginatedRequest(url, attempts);
                 }, config.api.errorTimeout);
               } else {
-                cLog.error(`Hit max attempt limit calling: ${url}; Retry #${attempts}`);
+                cLog.error(`PAGINATION ERROR: Hit max attempt limit calling: ${url}; Retry #${attempts}`);
 
                 // TODO: Send better error and check for it in service
                 return cb([]);
@@ -146,7 +149,7 @@ const helpers = () => {
         const attempts = opts.attempts ? opts.attempts + 1 : 1;
 
         opts.attempts = attempts;
-        cLog.error(`ERROR: ${JSON.stringify(error)} ${JSON.stringify(body || '')}; Url: ${requestOpts.url}`);
+        cLog.error(`ERROR: ${JSON.stringify(error)} ${JSON.stringify(body || '')}; Url: ${requestOpts.url}; Retry #${attempts}`);
         cLog.warn(`Retry attempt #${attempts}`);
 
         if (attempts <= config.maxAttempts) {
