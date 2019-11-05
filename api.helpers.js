@@ -16,7 +16,7 @@ const requestSettings = {
 
   json: true
 };
-
+cLog.error(JSON.stringify(config));
 let base = config.api.base.replace(/\/$/, "");
 
 const helpers = () => {
