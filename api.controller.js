@@ -50,7 +50,7 @@ const apiController = (() => {
         if (sessionDays.hasOwnProperty(year)) {
           if (sessionDays[year].hasOwnProperty("lastUpdated") && sessionDays[year].hasOwnProperty("sessionDays")) {
             if ((Date.now() - sessionDays[year]["lastUpdated"]) < cachingTime) {
-              fount = true;
+              found = true;
               resolve(sessionDays[year]["sessionDays"]);
             }
           }
