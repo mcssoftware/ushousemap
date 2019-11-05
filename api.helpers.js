@@ -126,13 +126,13 @@ const helpers = () => {
               }
             } else {
               attempts++;
-              cLog.error(`PAGINATION ERROR: ${JSON.stringify(error)} ${JSON.stringify(body || '')}; Errortimeout: ${config.errorTimeout} Maxattempt: ${config.maxAttempts} Retry #${attempts} at ${url}`);
+              cLog.error(`PAGINATION ERROR: ${JSON.stringify(error)} ${JSON.stringify(body || '')}; Errortimeout: ${config.api.errorTimeout} Maxattempt: ${config.api.maxAttempts} Retry #${attempts} at ${url}`);
               cLog.warn(`Retry #${attempts}`);
 
-              if (attempts <= config.maxAttempts) {
+              if (attempts <= config.api.maxAttempts) {
                 setTimeout(() => {
                   makePaginatedRequest(url, attempts);
-                }, config.errorTimeout);
+                }, config.api.errorTimeout);
               } else {
                 cLog.error(`Hit max attempt limit calling: ${url}`);
 
