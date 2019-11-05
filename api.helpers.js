@@ -16,7 +16,6 @@ const requestSettings = {
 
   json: true
 };
-cLog.error(JSON.stringify(config));
 let base = config.api.base.replace(/\/$/, "");
 
 const helpers = () => {
@@ -134,7 +133,7 @@ const helpers = () => {
                   makePaginatedRequest(url, attempts);
                 }, config.api.errorTimeout);
               } else {
-                cLog.error(`Hit max attempt limit calling: ${url}`);
+                cLog.error(`Hit max attempt limit calling: ${url}; Retry #${attempts}`);
 
                 // TODO: Send better error and check for it in service
                 return cb([]);
