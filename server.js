@@ -49,6 +49,6 @@ app.use(express.static(DIST_DIR, {
 
 const PORT = process.env.PORT || 2112
 app.listen(PORT, () => {
-    console.log(`App listening to ${PORT}....`)
+    console.log(`${new Date().toLocaleString()} App listening to ${PORT}....`)
     console.log('Press Ctrl+C to quit.')
 })
