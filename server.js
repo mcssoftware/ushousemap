@@ -33,9 +33,10 @@ app.use(helmet.contentSecurityPolicy({
         styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', 'fonts.googleapis.com', 'amp.azure.net', "'unsafe-inline'"],
         scriptSrc: ["'self'", 'amp.azure.net', 'bam.nr-data.net', 'js-agent.newrelic.com', "'unsafe-inline'"],
         fontSrc: ["'self'", 'amp.azure.net', 'maxcdn.bootstrapcdn.com', 'fonts.gstatic.com'],
-        connectSrc: ["'self'", 'bam.nr-data.net', 'liveproxy-azapp-prod-eastus2-001.azurewebsites.net'],
+        connectSrc: ["'self'", 'bam.nr-data.net', 'liveproxy-azapp-prod-eastus2-001.azurewebsites.net', 'livehouseproxy.azurewebsites.net', 'houseliveprod.streaming.mediaservices.windows.net'],
         workerSrc: ["'self'", 'amp.azure.net', "blob:"],
         objectSrc: ["'none'"],
+        imgSrc: ["'self'", 'amp.azure.net', "data:"]
     }
 }))
 
@@ -49,6 +50,5 @@ app.use(express.static(DIST_DIR, {
 
 const PORT = process.env.PORT || 2112
 app.listen(PORT, () => {
-    console.log(`${new Date().toLocaleString()} App listening to ${PORT}....`)
-    console.log('Press Ctrl+C to quit.')
+    console.log(`App listening to ${PORT}.... ${new Date().toLocaleString()}`);
 })
