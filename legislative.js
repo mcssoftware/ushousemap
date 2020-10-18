@@ -21,7 +21,10 @@ module.exports.getDocuments = function (request, response, next) {
         utils.cLog.verbose("DB: collection : " + collectionName + " request query: " + utils.stringify(request.query));
 
         var query = new breezeMongo.MongoQuery(request.query);
-        query.select = {...query.select, ...getExcludesField(collectionName)};
+        var excludesFields = getExcludesField(collectionName);
+        if (excludesFields && Object.keys(excludesFields).length > 0){
+            query.select = {...query.select, ...excludesFields};
+        }
 
         query.execute(db.get(), collectionName, function (error, results) {
             transaction.end();
@@ -56,10 +59,9 @@ module.exports.getDocumentById = function (request, response) {
         utils.cLog.verbose("[HIT] Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
 
         var query = new breezeMongo.MongoQuery(request.query);
-        if (config.excludes && Array.isArray(config.excludes[collectionName.toUpperCase()])) {
-            config.excludes[collectionName.toUpperCase()].forEach(fld => {
-                query.filter[fld] = 0;
-            });
+        var excludesFields = getExcludesField(collectionName);
+        if (excludesFields && Object.keys(excludesFields).length > 0){
+            query.select = {...query.select, ...excludesFields};
         }
 
         query.execute(db.get(), collectionName, function (error, results, next) {
@@ -93,7 +95,7 @@ function getCollectionName(requestUrl) {
     if (requestUrlParsed.indexOf("/votes") > -1) {
         collectionName = "Votes";
     } else if (requestUrlParsed.indexOf("/members") > -1) {
-        collectionName = "Member";
+        collectionName = "Members";
     } else if (requestUrlParsed.indexOf("/floorsummaries") > -1) {
         collectionName = "FloorSummaries";
     } else if (requestUrlParsed.indexOf("/committeemeetings") > -1) {
@@ -252,6 +254,7 @@ function responseMetadata(request, response, item, next) {
 };
 
 function getExcludesField(collectionName){
+    utils.cLog.info(JSON.stringify(config.excludes));
     if (config.excludes && Array.isArray(config.excludes[collectionName.toUpperCase()])) {
         const select = {};
         config.excludes[collectionName.toUpperCase()].forEach(fld => {
