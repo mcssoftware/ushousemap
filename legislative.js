@@ -3,36 +3,42 @@ var config = require('../configs/config.js'),
     utilsHttp = require('../libraries/util.http.js'),
     breezeMongo = require('breeze-mongodb'),
     js2xml = require('js2xmlparser');
+var nr = require('newrelic');
 
 module.exports.getDocuments = function (request, response, next) {
     var db = require('./dbConnection');
     var collectionName = getCollectionName(request.url.toLowerCase());
+    nr.startBackgroundTransaction('Get Documents from ' + (collectionName || '').toUpperCase(), 'Calling MONGO DB', function transactionHandler() {
+        var transaction = nr.getTransaction();
 
-    if (request.query.$top > config.response.recordLimit || !request.query.$top) {
-        request.query.$top = config.response.recordLimit;
-    }
-    if (!request.query.$inlinecount) {
-        request.query.$inlinecount = true;
-    }
-
-    utils.cLog("DB: collection : " + collectionName + " request query: " + utils.stringify(request.query));
-
-    var query = new breezeMongo.MongoQuery(request.query);
-
-    query.execute(db.get(), collectionName, function (error, results) {
-        if (!error) {
-            utils.cLog("Received results from MongoDB.");
-            if (results != null) {
-                responseMetadata(request, response, results, next);
-            } else {
-                utilsHttp.notFound(request, response);
-            }
-        } else {
-            utils.cLog("Error while getting data from mongo");
-            const errormsg = utils.stringify(error || {});
-            utils.cLog(errormsg);
-            next(errormsg);
+        if (request.query.$top > config.response.recordLimit || !request.query.$top) {
+            request.query.$top = config.response.recordLimit;
         }
+        if (!request.query.$inlinecount) {
+            request.query.$inlinecount = true;
+        }
+
+        utils.cLog.verbose("DB: collection : " + collectionName + " request query: " + utils.stringify(request.query));
+
+        var query = new breezeMongo.MongoQuery(request.query);
+        query.select = {...query.select, ...getExcludesField(collectionName)};
+
+        query.execute(db.get(), collectionName, function (error, results) {
+            transaction.end();
+            if (!error) {
+                utils.cLog.debug("Received results from MongoDB.");
+                if (results != null) {
+                    responseMetadata(request, response, results, next);
+                } else {
+                    utilsHttp.notFound(request, response);
+                }
+            } else {
+                utils.cLog.error("Error while getting data from mongo");
+                const errormsg = utils.stringify(error || {});
+                utils.cLog.error(errormsg);
+                next(errormsg);
+            }
+        });
     });
 };
 
@@ -41,27 +47,35 @@ module.exports.getDocumentById = function (request, response) {
     var id = request.params.id;
     var collectionName = getCollectionName(request.url.toLowerCase());
 
-    if (!request.query.$inlinecount) {
-        request.query.$inlinecount = true;
-    }
-
-    utils.cLog("[HIT] Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
-
-    var query = new breezeMongo.MongoQuery(request.query);
-    query.filter["_id"] = id;
-
-    query.execute(db.get(), collectionName, function (error, results, next) {
-        if (!error) {
-            if (results != null) {
-                responseMetadata(request, response, results, next);
-            } else {
-                utilsHttp.notFound(request, response);
-            }
-        } else {
-            const errormsg = utils.stringify(error || {});
-            utils.cLog("[ERROR] " +errormsg);
-            next(errormsg);
+    nr.startBackgroundTransaction('Get Document by ID from ' + (collectionName || '').toUpperCase(), 'Calling MONGO DB', function transactionHandler() {
+        var transaction = nr.getTransaction();
+        if (!request.query.$inlinecount) {
+            request.query.$inlinecount = true;
         }
+
+        utils.cLog.verbose("[HIT] Collection: " + collectionName + ", ID: " + id + " w/ Request=" + request.url);
+
+        var query = new breezeMongo.MongoQuery(request.query);
+        if (config.excludes && Array.isArray(config.excludes[collectionName.toUpperCase()])) {
+            config.excludes[collectionName.toUpperCase()].forEach(fld => {
+                query.filter[fld] = 0;
+            });
+        }
+
+        query.execute(db.get(), collectionName, function (error, results, next) {
+            transaction.end();
+            if (!error) {
+                if (results != null) {
+                    responseMetadata(request, response, results, next);
+                } else {
+                    utilsHttp.notFound(request, response);
+                }
+            } else {
+                const errormsg = utils.stringify(error || {});
+                utils.cLog.error("[ERROR] " + errormsg);
+                next(errormsg);
+            }
+        });
     });
 };
 
@@ -79,7 +93,7 @@ function getCollectionName(requestUrl) {
     if (requestUrlParsed.indexOf("/votes") > -1) {
         collectionName = "Votes";
     } else if (requestUrlParsed.indexOf("/members") > -1) {
-        collectionName = "Members";
+        collectionName = "Member";
     } else if (requestUrlParsed.indexOf("/floorsummaries") > -1) {
         collectionName = "FloorSummaries";
     } else if (requestUrlParsed.indexOf("/committeemeetings") > -1) {
@@ -232,7 +246,18 @@ function responseMetadata(request, response, item, next) {
                 }
         }
     } catch (err) {
-        utils.cLog("[ERROR] trying to response with metadata");
+        utils.cLog.error("[ERROR] trying to response with metadata");
         next(err);
     }
 };
+
+function getExcludesField(collectionName){
+    if (config.excludes && Array.isArray(config.excludes[collectionName.toUpperCase()])) {
+        const select = {};
+        config.excludes[collectionName.toUpperCase()].forEach(fld => {
+            select[fld] = 0;
+        });
+        return select;
+    }
+    return {};
+}
